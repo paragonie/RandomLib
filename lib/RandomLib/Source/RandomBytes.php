@@ -21,6 +21,7 @@
  * @subpackage Source
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @copyright  2011 The Authors
  * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
  *
@@ -40,6 +41,7 @@ use SecurityLib\Strength;
  * @subpackage Source
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  */
 class RandomBytes extends \RandomLib\AbstractSource
 {
@@ -52,7 +54,7 @@ class RandomBytes extends \RandomLib\AbstractSource
      */
     public static function isSupported()
     {
-        return function_exists('random_bytes');
+        return \is_callable('random_bytes');
     }
 
     /**
@@ -75,7 +77,7 @@ class RandomBytes extends \RandomLib\AbstractSource
     public function generate($size)
     {
         if (!self::isSupported()) {
-            return str_repeat(chr(0), $size);
+            return \str_repeat(chr(0), $size);
         }
 
         return \random_bytes($size);

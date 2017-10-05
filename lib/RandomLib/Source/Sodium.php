@@ -22,6 +22,7 @@
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
  * @author     Ben Ramsey <ben@benramsey.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @copyright  2011 The Authors
  * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
  *
@@ -45,6 +46,7 @@ use SecurityLib\Strength;
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
  * @author     Ben Ramsey <ben@benramsey.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  */
 class Sodium extends \RandomLib\AbstractSource
 {
@@ -104,6 +106,6 @@ class Sodium extends \RandomLib\AbstractSource
             return str_repeat(chr(0), $size);
         }
 
-        return \Sodium\randombytes_buf($size);
+        return (string) \Sodium\randombytes_buf($size);
     }
 }

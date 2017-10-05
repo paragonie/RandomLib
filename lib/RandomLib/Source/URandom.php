@@ -21,6 +21,7 @@
  * @subpackage Source
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @copyright  2011 The Authors
  * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
  *
@@ -40,6 +41,7 @@ use SecurityLib\Strength;
  * @subpackage Source
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @codeCoverageIgnore
  */
 class URandom extends \RandomLib\AbstractSource
@@ -57,7 +59,7 @@ class URandom extends \RandomLib\AbstractSource
      */
     public static function getStrength()
     {
-        return new Strength(Strength::MEDIUM);
+        return new Strength(Strength::HIGH);
     }
 
     /**
@@ -68,7 +70,7 @@ class URandom extends \RandomLib\AbstractSource
      */
     public static function isSupported()
     {
-        return @file_exists(static::$file);
+        return (bool) @\file_exists(static::$file);
     }
 
     /**
@@ -83,15 +85,23 @@ class URandom extends \RandomLib\AbstractSource
         if ($size == 0) {
             return static::emptyValue($size);
         }
-        $file = fopen(static::$file, 'rb');
-        if (!$file) {
-            return static::emptyValue($size);
+        $file = \fopen(static::$file, 'rb');
+        if (!\is_resource($file)) {
+            /** @var string $result */
+            $result = static::emptyValue($size);
+            return $result;
         }
-        if (function_exists('stream_set_read_buffer')) {
-            stream_set_read_buffer($file, 0);
+        if (\is_callable('stream_set_read_buffer')) {
+            \stream_set_read_buffer($file, 0);
         }
-        $result = fread($file, $size);
-        fclose($file);
+        /** @var string $result */
+        $result = \fread($file, $size);
+        if (!\is_string($result)) {
+            /** @var string $result */
+            $result = static::emptyValue($size);
+            return $result;
+        }
+        \fclose($file);
 
         return $result;
     }

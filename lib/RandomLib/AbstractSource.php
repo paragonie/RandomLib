@@ -16,6 +16,7 @@
  * @package   Random
  *
  * @author    Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author    Paragon Initiative Enterprises <security@paragonie.com>
  * @copyright 2011 The Authors
  * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
  *
@@ -64,6 +65,6 @@ abstract class AbstractSource implements \RandomLib\Source
      */
     protected static function emptyValue($size)
     {
-        return str_repeat(chr(0), $size);
+        return (string) \str_repeat(\chr(0), $size);
     }
 }

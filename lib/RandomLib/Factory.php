@@ -20,6 +20,7 @@
  * @package    Random
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @copyright  2011 The Authors
  * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
  *
@@ -38,17 +39,18 @@ use SecurityLib\Strength;
  * @package    Random
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  */
 class Factory extends \SecurityLib\AbstractFactory
 {
 
     /**
-     * @var array A list of available random number mixing strategies
+     * @var array<int, Mixer> A list of available random number mixing strategies
      */
     protected $mixers = array();
 
     /**
-     * @var array A list of available random number sources
+     * @var array<int, Source> A list of available random number sources
      */
     protected $sources = array();
 
@@ -68,7 +70,7 @@ class Factory extends \SecurityLib\AbstractFactory
      *
      * @param Strength $strength The requested strength of the random number
      *
-     * @throws RuntimeException If an appropriate mixing strategy isn't found
+     * @throws \RuntimeException If an appropriate mixing strategy isn't found
      *
      * @return Generator The instantiated generator
      */
@@ -125,7 +127,7 @@ class Factory extends \SecurityLib\AbstractFactory
     /**
      * Get all loaded mixing strategies
      *
-     * @return array An array of mixers
+     * @return array<int, Mixer> An array of mixers
      */
     public function getMixers()
     {
@@ -135,7 +137,7 @@ class Factory extends \SecurityLib\AbstractFactory
     /**
      * Get all loaded random number sources
      *
-     * @return array An array of sources
+     * @return array<int, Source> An array of sources
      */
     public function getSources()
     {
@@ -189,16 +191,21 @@ class Factory extends \SecurityLib\AbstractFactory
      *
      * @param Strength $strength The strength mixer to find
      *
-     * @throws RuntimeException if a valid source cannot be found
+     * @throws \RuntimeException if a valid source cannot be found
      *
-     * @return Source The found source
+     * @return array<int, Source> The found source
      */
     protected function findSources(\SecurityLib\Strength $strength)
     {
+        /** @var array<int, Source> $sources */
         $sources = array();
         foreach ($this->getSources() as $source) {
             if ($strength->compare($source::getStrength()) <= 0 && $source::isSupported()) {
-                $sources[] = new $source();
+                /** @var Source $obj */
+                $obj = new $source();
+                if ($obj instanceof Source) {
+                    $sources[] = $obj;
+                }
             }
         }
 
@@ -214,30 +221,38 @@ class Factory extends \SecurityLib\AbstractFactory
      *
      * @param Strength $strength The strength mixer to find
      *
-     * @throws RuntimeException if a valid mixer cannot be found
+     * @throws \RuntimeException if a valid mixer cannot be found
      *
      * @return Mixer The found mixer
      */
     protected function findMixer(\SecurityLib\Strength $strength)
     {
+        /** @var Mixer|null $newMixer */
         $newMixer = null;
+        /** @var Mixer|null $fallback */
         $fallback = null;
         foreach ($this->getMixers() as $mixer) {
-            if (!$mixer::test()) {
+            if (!$mixer::test() || !$mixer::advisable()) {
                 continue;
             }
             if ($strength->compare($mixer::getStrength()) == 0) {
+                /** @var Mixer $newMixer */
                 $newMixer = new $mixer();
             } elseif ($strength->compare($mixer::getStrength()) == 1) {
+                /** @var Mixer $fallback */
                 $fallback = new $mixer();
             }
         }
-        if (is_null($newMixer)) {
-            if (is_null($fallback)) {
+        if (\is_null($newMixer)) {
+            if (\is_null($fallback)) {
                 throw new \RuntimeException('Could not find mixer');
+            } elseif (!($fallback instanceof Mixer)) {
+                throw new \RuntimeException('Invalid Mixer');
             }
 
             return $fallback;
+        } elseif (!($newMixer instanceof Mixer)) {
+            throw new \RuntimeException('Invalid Mixer');
         }
 
         return $newMixer;

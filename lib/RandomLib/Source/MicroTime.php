@@ -23,6 +23,7 @@
  * @subpackage Source
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @copyright  2011 The Authors
  * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
  *
@@ -30,7 +31,6 @@
  */
 namespace RandomLib\Source;
 
-use SecurityLib\Strength;
 use SecurityLib\Util;
 
 /**
@@ -45,6 +45,7 @@ use SecurityLib\Util;
  * @subpackage Source
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @codeCoverageIgnore
  */
 final class MicroTime extends \RandomLib\AbstractSource
@@ -98,7 +99,8 @@ final class MicroTime extends \RandomLib\AbstractSource
     public function generate($size)
     {
         $result      = '';
-        $seed        = microtime() . memory_get_usage();
+        /** @var string $seed */
+        $seed        = (string) \microtime() . \memory_get_usage();
         self::$state = hash('sha512', self::$state . $seed, true);
         /**
          * Make the generated randomness a bit better by forcing a GC run which
@@ -109,9 +111,9 @@ final class MicroTime extends \RandomLib\AbstractSource
         gc_collect_cycles();
         for ($i = 0; $i < $size; $i += 8) {
             $seed = self::$state .
-                    microtime() .
-                    pack('Ni', $i, self::counter());
-            self::$state = hash('sha512', $seed, true);
+                    (string) \microtime() .
+                    (string) \pack('Ni', $i, self::counter());
+            self::$state = \hash('sha512', $seed, true);
             /**
              * We only use the first 8 bytes here to prevent exposing the state
              * in its entirety, which could potentially expose other random
@@ -123,6 +125,9 @@ final class MicroTime extends \RandomLib\AbstractSource
         return Util::safeSubstr($result, 0, $size);
     }
 
+    /**
+     * @return int
+     */
     private static function counter()
     {
         if (self::$counter >= PHP_INT_MAX) {

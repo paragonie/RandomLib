@@ -19,6 +19,7 @@
  * @subpackage Mixer
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @copyright  2013 The Authors
  * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
  *
@@ -35,6 +36,7 @@ namespace RandomLib;
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
  * @author     Chris Smith <chris@cs278.org>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  */
 abstract class AbstractMcryptMixer extends AbstractMixer
 {
@@ -65,6 +67,13 @@ abstract class AbstractMcryptMixer extends AbstractMixer
     public static function test()
     {
         return extension_loaded('mcrypt');
+    }
+    /**
+     * @return bool
+     */
+    public static function advisable()
+    {
+        return static::test() && PHP_VERSION_ID < 70100;
     }
 
     /**
@@ -107,6 +116,12 @@ abstract class AbstractMcryptMixer extends AbstractMixer
      */
     protected function mixParts1($part1, $part2)
     {
+        if (!\is_string($part1)) {
+            throw new \InvalidArgumentException('Expected a string');
+        }
+        if (!\is_string($part2)) {
+            throw new \InvalidArgumentException('Expected a string');
+        }
         return $this->encryptBlock($part1, $part2);
     }
 
@@ -115,6 +130,12 @@ abstract class AbstractMcryptMixer extends AbstractMixer
      */
     protected function mixParts2($part1, $part2)
     {
+        if (!\is_string($part1)) {
+            throw new \InvalidArgumentException('Expected a string');
+        }
+        if (!\is_string($part2)) {
+            throw new \InvalidArgumentException('Expected a string');
+        }
         return $this->decryptBlock($part2, $part1);
     }
 

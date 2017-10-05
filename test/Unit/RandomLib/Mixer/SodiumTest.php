@@ -12,7 +12,7 @@ namespace RandomLib\Mixer;
 
 use SecurityLib\Strength;
 
-class McryptRijndael128Test extends \PHPUnit_Framework_TestCase
+class SodiumTest extends \PHPUnit_Framework_TestCase
 {
     public static function provideMix()
     {
@@ -20,12 +20,12 @@ class McryptRijndael128Test extends \PHPUnit_Framework_TestCase
             array(array(), ''),
             array(array('', ''), ''),
             array(array('a'), '61'),
-            array(array('a', 'b'), '6a'),
-            array(array('aa', 'ba'), '688d'),
-            array(array('ab', 'bb'), 'f8bc'),
-            array(array('aa', 'bb'), 'a0f3'),
-            array(array('aa', 'bb', 'cc'), '87c3'),
-            array(array('aabbcc', 'bbccdd', 'ccddee'), '7cf2273e46c7'),
+            array(array('a', 'b'), '44'),
+            array(array('aa', 'ba'), '6967'),
+            array(array('ab', 'bb'), '73a6'),
+            array(array('aa', 'bb'), 'bc7b'),
+            array(array('aa', 'bb', 'cc'), '0cbd'),
+            array(array('aabbcc', 'bbccdd', 'ccddee'), '5f0005cacd7c'),
         );
 
         return $data;
@@ -33,27 +33,27 @@ class McryptRijndael128Test extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        if (!\extension_loaded('mcrypt') || PHP_VERSION_ID < 70100) {
-            $this->markTestSkipped('mcrypt extension is not available');
+        if (!\is_callable('sodium_crypto_generichash')) {
+            $this->markTestSkipped('sodium extension is not available');
         }
     }
 
     public function testConstructWithoutArgument()
     {
-        $hash = new McryptRijndael128();
+        $hash = new SodiumMixer();
         $this->assertTrue($hash instanceof \RandomLib\Mixer);
     }
 
     public function testGetStrength()
     {
         $strength = new Strength(Strength::HIGH);
-        $actual = McryptRijndael128::getStrength();
+        $actual = SodiumMixer::getStrength();
         $this->assertEquals($actual, $strength);
     }
 
     public function testTest()
     {
-        $actual = McryptRijndael128::test();
+        $actual = SodiumMixer::test();
         $this->assertTrue($actual);
     }
 
@@ -62,7 +62,7 @@ class McryptRijndael128Test extends \PHPUnit_Framework_TestCase
      */
     public function testMix($parts, $result)
     {
-        $mixer = new McryptRijndael128();
+        $mixer = new SodiumMixer();
         $actual = $mixer->mix($parts);
         $this->assertEquals($result, bin2hex($actual));
     }

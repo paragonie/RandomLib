@@ -18,6 +18,7 @@
  * @package   Random
  *
  * @author    Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author    Paragon Initiative Enterprises <security@paragonie.com>
  * @copyright 2011 The Authors
  * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
  *
@@ -36,6 +37,7 @@ use SecurityLib\Util;
  * @package  Random
  *
  * @author   Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author    Paragon Initiative Enterprises <security@paragonie.com>
  */
 abstract class AbstractMixer implements \RandomLib\Mixer
 {
@@ -68,28 +70,43 @@ abstract class AbstractMixer implements \RandomLib\Mixer
     abstract protected function mixParts2($part1, $part2);
 
     /**
+     * @return bool
+     */
+    public static function advisable()
+    {
+        return static::test();
+    }
+
+    /**
      * Mix the provided array of strings into a single output of the same size
      *
      * All elements of the array should be the same size.
      *
-     * @param array $parts The parts to be mixed
+     * @param array<int, string> $parts The parts to be mixed
      *
      * @return string The mixed result
+     * @psalm-suppress MixedArgument
      */
     public function mix(array $parts)
     {
         if (empty($parts)) {
             return '';
         }
+        /** @var int $len */
         $len        = Util::safeStrlen($parts[0]);
+        /** @var array<int, array<int, string>> $parts */
         $parts      = $this->normalizeParts($parts);
-        $stringSize = count($parts[0]);
-        $partsSize  = count($parts);
+        $stringSize = \count($parts[0]);
+        $partsSize  = \count($parts);
+        /** @var string $result */
         $result     = '';
+        /** @var int $offset */
         $offset     = 0;
-        for ($i = 0; $i < $stringSize; $i++) {
-            $stub = $parts[$offset][$i];
-            for ($j = 1; $j < $partsSize; $j++) {
+        for ($i = 0; $i < $stringSize; ++$i) {
+            /** @var string $stub */
+            $stub = (string) $parts[$offset][$i];
+            for ($j = 1; $j < $partsSize; ++$j) {
+                /** @var string $newKey */
                 $newKey = $parts[($j + $offset) % $partsSize][$i];
                 //Alternately mix the output for each source
                 if ($j % 2 == 1) {
@@ -102,7 +119,9 @@ abstract class AbstractMixer implements \RandomLib\Mixer
             $offset  = ($offset + 1) % $partsSize;
         }
 
-        return Util::safeSubstr($result, 0, $len);
+        /** @var string $final */
+        $final = Util::safeSubstr($result, 0, $len);
+        return $final;
     }
 
     /**
@@ -111,16 +130,27 @@ abstract class AbstractMixer implements \RandomLib\Mixer
      * This will make all parts the same length and a multiple
      * of the part size
      *
-     * @param array $parts The parts to normalize
+     * @param array<int, string> $parts The parts to normalize
      *
      * @return array The normalized and split parts
+     * @psalm-suppress MissingClosureReturnType
+     * @psalm-suppress UntypedParam
+     * @psalm-suppress MissingArgument
      */
     protected function normalizeParts(array $parts)
     {
         $blockSize = $this->getPartSize();
-        $callback  = function ($value) {
-            return Util::safeStrlen($value);
+        $callback =
+        /**
+         * @var callable $callback
+         * @param string $value
+         * @return int
+         */
+        function ($value) {
+            return (int) Util::safeStrlen($value);
         };
+
+        /** @var int $maxSize */
         $maxSize = max(array_map($callback, $parts));
         if ($maxSize % $blockSize != 0) {
             $maxSize += $blockSize - ($maxSize % $blockSize);
@@ -133,6 +163,12 @@ abstract class AbstractMixer implements \RandomLib\Mixer
         return $parts;
     }
 
+    /**
+     * @param string $string
+     * @param int $size
+     * @param string $character
+     * @return string
+     */
     private function str_pad($string, $size, $character)
     {
         $start = Util::safeStrlen($string);
@@ -142,17 +178,5 @@ abstract class AbstractMixer implements \RandomLib\Mixer
         }
 
         return Util::safeSubstr($string, 0, $size);
-    }
-
-    private function str_split($string, $size)
-    {
-        $blocks = array();
-        $length = Util::safeStrlen($string);
-        $parts = ceil($length / $size);
-        for ($i = 0; $i < $parts; $i++) {
-            $blocks[] = Util::safeSubstr($string, $i * $length, $length);
-        }
-
-        return $blocks;
     }
 }

@@ -21,6 +21,7 @@
  * @subpackage Source
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @copyright  2011 The Authors
  * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
  *
@@ -40,6 +41,7 @@ use SecurityLib\Strength;
  * @subpackage Source
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @codeCoverageIgnore
  */
 class CAPICOM extends \RandomLib\AbstractSource
@@ -75,15 +77,28 @@ class CAPICOM extends \RandomLib\AbstractSource
      */
     public function generate($size)
     {
+        if (!\class_exists('COM', false)) {
+            /** @var string $result */
+            $result = static::emptyValue($size);
+            return $result;
+        }
         try {
+            /** @var \COM $util */
             $util = new \COM('CAPICOM.Utilities.1');
-            $data = base64_decode($util->GetRandom($size, 0));
+            if (!\method_exists($util, 'GetRandom')) {
+                /** @var string $result */
+                $result = static::emptyValue($size);
+                return $result;
+            }
+            $data = base64_decode((string) $util->GetRandom($size, 0));
 
-            return str_pad($data, $size, chr(0));
+            return (string) str_pad($data, $size, chr(0));
         } catch (\Exception $e) {
             unset($e);
 
-            return static::emptyValue($size);
+            /** @var string $result */
+            $result = static::emptyValue($size);
+            return $result;
         }
     }
 }

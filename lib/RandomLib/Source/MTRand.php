@@ -23,6 +23,7 @@
  * @subpackage Source
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @copyright  2011 The Authors
  * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
  *
@@ -44,6 +45,7 @@ use SecurityLib\Strength;
  * @subpackage Source
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @codeCoverageIgnore
  */
 class MTRand extends \RandomLib\AbstractSource
@@ -58,9 +60,9 @@ class MTRand extends \RandomLib\AbstractSource
     {
         // Detect if Suhosin Hardened PHP patch is applied
         if (defined('S_ALL')) {
-            return new Strength(Strength::MEDIUM);
-        } else {
             return new Strength(Strength::LOW);
+        } else {
+            return new Strength(Strength::VERYLOW);
         }
     }
 

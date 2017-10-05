@@ -23,3 +23,8 @@ cs:
 .PHONY: test
 test:
 	vendor/bin/phpunit
+
+
+.PHONY: typecheck
+typecheck:
+	vendor/bin/psalm

@@ -12,8 +12,17 @@ namespace RandomLib;
 
 class GeneratorStringTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Generator
+     */
     protected $generator = null;
+    /**
+     * @var Mixer
+     */
     protected $mixer = null;
+    /**
+     * @var array<int, Source>
+     */
     protected $sources = array();
 
     public static function provideCharCombinations()
@@ -73,6 +82,7 @@ class GeneratorStringTest extends \PHPUnit_Framework_TestCase
                 }
                 $start = array_pop($sources);
 
+                // throw new \Exception('test');
                 return array_reduce(
                     $sources,
                     function ($el1, $el2) {

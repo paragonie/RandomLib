@@ -4,6 +4,10 @@ sudo: required
 
 matrix:
   include:
+    - php: 7.2
+      env: LIBSODIUM=0
+    - php: 7.1
+      env: LIBSODIUM=1
     - php: 7.0
       env: LIBSODIUM=1
     - php: 5.6
@@ -30,3 +34,4 @@ before_script:
 script:
   - make lint
   - make test
+  - make typecheck

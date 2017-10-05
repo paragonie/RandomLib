@@ -20,6 +20,7 @@
  * @package    Random
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @copyright  2011 The Authors
  * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
  *
@@ -36,6 +37,7 @@ namespace RandomLib;
  * @package    Random
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @codeCoverageIgnore
  */
 interface Mixer
@@ -54,6 +56,13 @@ interface Mixer
      * @return bool If the mixer is available on the system
      */
     public static function test();
+
+    /**
+     * Even if the mixer is available,
+     *
+     * @return bool
+     */
+    public static function advisable();
 
     /**
      * Mix the provided array of strings into a single output of the same size

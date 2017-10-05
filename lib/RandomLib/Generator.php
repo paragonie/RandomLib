@@ -20,6 +20,7 @@
  * @package    Random
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @author     Timo Hamina
  * @copyright  2011 The Authors
  * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
@@ -27,6 +28,7 @@
  * @version    Build @@version@@
  */
 namespace RandomLib;
+use SecurityLib\Util;
 
 /**
  * The Random Number Generator Class
@@ -37,6 +39,7 @@ namespace RandomLib;
  * @package    Random
  *
  * @author     Anthony Ferrara <ircmaxell@ircmaxell.com>
+ * @author     Paragon Initiative Enterprises <security@paragonie.com>
  * @author     Timo Hamina
  */
 class Generator
@@ -108,12 +111,12 @@ class Generator
     protected $mixer = null;
 
     /**
-     * @var array An array of random number sources to use for this generator
+     * @var array<int, Source> An array of random number sources to use for this generator
      */
     protected $sources = array();
 
     /**
-     * @var array The different characters, by Flag
+     * @var array<int, string> The different characters, by Flag
      */
     protected $charArrays = array(
         self::CHAR_UPPER     => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
@@ -137,7 +140,7 @@ class Generator
     /**
      * Build a new instance of the generator
      *
-     * @param array $sources An array of random data sources to use
+     * @param array<int, Source> $sources An array of random data sources to use
      * @param Mixer $mixer   The mixing strategy to use for this generator
      */
     public function __construct(array $sources, Mixer $mixer)
@@ -173,7 +176,9 @@ class Generator
     {
         $seeds = array();
         foreach ($this->sources as $source) {
-            $seeds[] = $source->generate($size);
+            if ($source instanceof Source) {
+                $seeds[] = $source->generate($size);
+            }
         }
 
         return $this->mixer->mix($seeds);
@@ -208,7 +213,7 @@ class Generator
         }
 
         $bits  = $this->countBits($range) + 1;
-        $bytes = (int) max(ceil($bits / 8), 1);
+        $bytes = (int) \max(\ceil($bits / 8), 1);
         if ($bits == 63) {
             /**
              * Fixes issue #22
@@ -217,7 +222,7 @@ class Generator
              */
             $mask = 0x7fffffffffffffff;
         } else {
-            $mask = (int) (pow(2, $bits) - 1);
+            $mask = (int) ((1 << $bits) - 1);
         }
 
         /**
@@ -238,7 +243,8 @@ class Generator
          */
         do {
             $test   = $this->generate($bytes);
-            $result = hexdec(bin2hex($test)) & $mask;
+            /** @var int $result */
+            $result = \hexdec(\bin2hex($test)) & $mask;
         } while ($result > $range);
 
         return $result + $min;
@@ -250,9 +256,9 @@ class Generator
      * This uses the supplied character list for generating the new result
      * string.
      *
-     * @param int   $length     The length of the generated string
-     * @param mixed $characters String: An optional list of characters to use
-     *                          Integer: Character flags
+     * @param int        $length     The length of the generated string
+     * @param int|string $characters String: An optional list of characters to use
+     *                               Integer: Character flags
      *
      * @return string The generated random string
      */
@@ -268,6 +274,9 @@ class Generator
             // Default to base 64
             $characters = $this->expandCharacterSets(self::CHAR_BASE64);
         }
+        /**
+         * @var string $characters
+         */
 
         // determine how many bytes to generate
         // This is basically doing floor(log(strlen($characters)))
@@ -276,7 +285,8 @@ class Generator
 
         // The max call here fixes an issue where we under-generate in cases
         // where less than 8 bits are needed to represent $len
-        $bytes = $length * ceil(($this->countBits($len)) / 8);
+        /** @var int $bytes */
+        $bytes = (int) ($length * ceil(($this->countBits($len)) / 8));
 
         // determine mask for valid characters
         $mask   = 256 - (256 % $len);
@@ -285,14 +295,16 @@ class Generator
         do {
             $rand = $this->generate($bytes);
             for ($i = 0; $i < $bytes; $i++) {
-                if (ord($rand[$i]) >= $mask) {
+                if (\ord($rand[$i]) >= $mask) {
                     continue;
                 }
-                $result .= $characters[ord($rand[$i]) % $len];
+                /** @var int $idx */
+                $idx = (int) ((int) \ord($rand[$i]) % (int) ($len));
+                $result .= (string) ($characters[$idx]);
             }
-        } while (strlen($result) < $length);
+        } while (Util::safeStrlen($result) < $length);
         // We may over-generate, since we always use the entire buffer
-        return substr($result, 0, $length);
+        return Util::safeSubstr($result, 0, $length);
     }
 
     /**
@@ -308,7 +320,7 @@ class Generator
     /**
      * Get the Sources used for this instance
      *
-     * @return Source[] the current mixer
+     * @return array<int, Source> the current mixer
      */
     public function getSources()
     {
@@ -346,6 +358,7 @@ class Generator
      */
     protected function expandCharacterSets($spec)
     {
+        /** @var string $combined */
         $combined = '';
         if ($spec == self::EASY_TO_READ) {
             $spec |= self::CHAR_ALNUM;
@@ -361,9 +374,13 @@ class Generator
         }
         if ($spec & self::EASY_TO_READ) {
             // remove ambiguous characters
-            $combined = str_replace(str_split(self::AMBIGUOUS_CHARS), '', $combined);
+            $combined = \str_replace(
+                \str_split(self::AMBIGUOUS_CHARS),
+                '',
+                $combined
+            );
         }
 
-        return count_chars($combined, 3);
+        return (string) \count_chars($combined, 3);
     }
 }

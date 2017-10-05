@@ -14,6 +14,13 @@ use SecurityLib\Strength;
 
 class SodiumTest extends \PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        if (!extension_loaded('libsodium')) {
+            $this->markTestSkipped('The libsodium extension is not loaded');
+        }
+    }
+
     public static function provideGenerate()
     {
         $data = array();
