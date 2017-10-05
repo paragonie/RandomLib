@@ -1,11 +1,17 @@
 RandomLib
 =========
 
-[![Build Status](https://travis-ci.org/ircmaxell/RandomLib.svg?branch=master)](https://travis-ci.org/ircmaxell/RandomLib)
+[![Build Status](https://travis-ci.org/paragonie/RandomLib.svg?branch=master)](https://travis-ci.org/paragonie/RandomLib)
+[![Latest Stable Version](https://poser.pugx.org/paragonie/RandomLib/v/stable)](https://packagist.org/packages/paragonie/RandomLib)
+[![Latest Unstable Version](https://poser.pugx.org/paragonie/RandomLib/v/unstable)](https://packagist.org/packages/paragonie/RandomLib)
+[![License](https://poser.pugx.org/paragonie/RandomLib/license)](https://packagist.org/packages/paragonie/RandomLib)
 
 A library for generating random numbers and strings of various strengths.
 
 This library is useful in security contexts.
+
+> Note: This is a fork of [Anthony Ferrara's `RandomLib`](https://github.com/ircmaxell/RandomLib),
+> maintained by [Paragon Initiative Enterprises](https://paragonie.com).
 
 Install
 -------
@@ -13,7 +19,7 @@ Install
 Via Composer
 
 ```sh
-$ composer require ircmaxell/random-lib
+$ composer require paragonie/random-lib
 ```
 
 Usage
@@ -63,11 +69,6 @@ Convenience method to get a high strength random number generator.
 High Strength keys should ONLY be used for generating extremely strong
 cryptographic keys.  Generating them is very resource intensive and may
 take several minutes or more depending on the requested size.
-
-**There are currently no mixers shipped with this package that are
-capable of creating a high space generator. This will not work out of
-the box!**
-
 
 ### Generator
 
@@ -135,10 +136,11 @@ MIT, see LICENSE.
 Community
 ---------
 
-If you have questions or want to help out, join us in the **#php.security**
+If you have questions or want to help out, join us in the **#phpc**
 channel on **irc.freenode.net**.
 
 Security Vulnerabilities
 ========================
 
-If you have found a security issue, please contact the author directly at [me@ircmaxell.com](mailto:me@ircmaxell.com).
+If you have found a security issue, please contact the author directly at
+[security@paragonie.com](mailto:security@paragonie.com).
