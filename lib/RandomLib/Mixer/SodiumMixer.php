@@ -41,8 +41,17 @@ class SodiumMixer extends AbstractMixer
      */
     public static function test()
     {
-        return is_callable('sodium_crypto_stream') && is_callable('sodium_crypto_generichash') && !defined('HHVM_VERSION');
+        return is_callable('sodium_crypto_stream') && is_callable('sodium_crypto_generichash');
     }
+
+    /**
+     * @return bool
+     */
+    public static function advisable()
+    {
+        return static::test() && !defined('HHVM_VERSION');
+    }
+
     /**
      * Get the block size (the size of the individual blocks used for the mixing)
      *
