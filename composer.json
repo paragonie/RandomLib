@@ -20,8 +20,7 @@
     "require-dev": {
         "mikey179/vfsStream": "^1.6",
         "friendsofphp/php-cs-fixer": "^1.11",
-        "phpunit/phpunit": "^4.8 || >=5.0.0 <5.4",
-        "vimeo/psalm": "^0|^1"
+        "phpunit/phpunit": "^4.8 || >=5.0.0 <5.4"
     },
     "require": {
         "ircmaxell/security-lib": "^1.1",
