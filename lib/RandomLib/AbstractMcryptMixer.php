@@ -78,6 +78,7 @@ abstract class AbstractMcryptMixer extends AbstractMixer
 
     /**
      * Construct mcrypt mixer
+     * @psalm-suppress UndefinedConstant
      */
     public function __construct()
     {
