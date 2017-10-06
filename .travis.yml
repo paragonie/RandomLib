@@ -26,6 +26,9 @@ matrix:
       env: USE_PSALM=1
     - php: "hhvm"
       env: USE_PSALM=1
+  allow_failures:
+    - php: "master"
+    - php: "nightly"
 
 before_script:
   - travis_retry composer self-update

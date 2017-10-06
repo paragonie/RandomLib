@@ -41,7 +41,7 @@ class SodiumMixer extends AbstractMixer
      */
     public static function test()
     {
-        return is_callable('sodium_crypto_stream') && is_callable('sodium_crypto_generichash');
+        return is_callable('sodium_crypto_stream') && is_callable('sodium_crypto_generichash') && !defined('HHVM_VERSION');
     }
     /**
      * Get the block size (the size of the individual blocks used for the mixing)
@@ -67,7 +67,7 @@ class SodiumMixer extends AbstractMixer
      */
     protected function mixParts1($part1, $part2)
     {
-        return \sodium_crypto_generichash($part1 . $part2, '', $this->getPartSize());
+        return (string) \sodium_crypto_generichash($part1 . $part2, '', $this->getPartSize());
     }
 
     /**
@@ -83,10 +83,11 @@ class SodiumMixer extends AbstractMixer
     protected function mixParts2($part1, $part2)
     {
         // Pre-hash the two inputs into a 448-bit output
+        /** @var string $hash */
         $hash = \sodium_crypto_generichash($part1 . $part2, '', 56);
 
         // Use salsa20 to expand into a pseudorandom string
-        return \sodium_crypto_stream(
+        return (string) \sodium_crypto_stream(
             $this->getPartSize(),
             Util::safeSubstr($hash, 0, 24),
             Util::safeSubstr($hash, 0, 32)
