@@ -150,8 +150,11 @@ abstract class AbstractMixer implements \RandomLib\Mixer
             return (int) Util::safeStrlen($value);
         };
 
+        $mapped = array_map($callback, $parts);
         /** @var int $maxSize */
-        $maxSize = max(array_map($callback, $parts));
+        $maxSize = count($mapped) > 1
+            ? max($mapped)
+            : array_shift($mapped);
         if ($maxSize % $blockSize != 0) {
             $maxSize += $blockSize - ($maxSize % $blockSize);
         }
