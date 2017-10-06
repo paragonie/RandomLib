@@ -139,6 +139,9 @@ abstract class AbstractMixer implements \RandomLib\Mixer
      */
     protected function normalizeParts(array $parts)
     {
+        if (empty($parts)) {
+            return $parts;
+        }
         $blockSize = $this->getPartSize();
         $callback =
         /**
