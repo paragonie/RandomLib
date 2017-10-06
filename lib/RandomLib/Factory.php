@@ -262,6 +262,7 @@ class Factory extends \SecurityLib\AbstractFactory
      * Load all core mixing strategies
      *
      * @return void
+     * @psalm-suppress InvalidArgument
      */
     protected function loadMixers()
     {
@@ -276,6 +277,7 @@ class Factory extends \SecurityLib\AbstractFactory
      * Load all core random number sources
      *
      * @return void
+     * @psalm-suppress InvalidArgument
      */
     protected function loadSources()
     {
