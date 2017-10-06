@@ -29,7 +29,7 @@ matrix:
 
 before_script:
   - travis_retry composer self-update
-    - if [[ $USE_PSALM -eq 1 ]]; then composer require --dev "vimeo/psalm:dev-master"; fi
+  - if [[ $USE_PSALM -eq 1 ]]; then composer require --dev "vimeo/psalm:dev-master"; fi
   - travis_retry composer install --prefer-source
 
 script:
