@@ -33,7 +33,7 @@ class SodiumTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        if (!\is_callable('sodium_crypto_generichash')) {
+        if (!\is_callable('sodium_crypto_generichash') || defined('HHVM_VERSION')) {
             $this->markTestSkipped('sodium extension is not available');
         }
     }
