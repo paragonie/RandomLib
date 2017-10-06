@@ -154,6 +154,9 @@ abstract class AbstractMixer implements \RandomLib\Mixer
         };
 
         $mapped = array_map($callback, $parts);
+        if (count($mapped) < 1) {
+            return array();
+        }
         /** @var int $maxSize */
         $maxSize = count($mapped) > 1
             ? max($mapped)
