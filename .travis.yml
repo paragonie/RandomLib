@@ -35,6 +35,7 @@ matrix:
     - php: "7.4"
     - php: "master"
     - php: "nightly"
+    - php: "hhvm"
 
 before_script:
   - travis_retry composer self-update
