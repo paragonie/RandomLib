@@ -33,6 +33,7 @@ matrix:
     - php: "hhvm"
       env: USE_PSALM=1
   allow_failures:
+    - php: "7.4"
     - php: "master"
     - php: "nightly"
 
