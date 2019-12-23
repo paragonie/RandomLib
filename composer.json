@@ -18,7 +18,7 @@
         }
     ],
     "require-dev": {
-        "mikey179/vfsStream": "^1.6",
+        "mikey179/vfsstream": "^1.6",
         "friendsofphp/php-cs-fixer": "^1.11",
         "phpunit/phpunit": "^4.8 || >=5.0.0 <5.4"
     },

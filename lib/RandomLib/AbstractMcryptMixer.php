@@ -82,7 +82,7 @@ abstract class AbstractMcryptMixer extends AbstractMixer
      */
     public function __construct()
     {
-        $this->mcrypt    = mcrypt_module_open($this->getCipher(), '', MCRYPT_MODE_ECB, '');
+        $this->mcrypt    = mcrypt_module_open($this->getCipher(), '', (string) MCRYPT_MODE_ECB, '');
         $this->blockSize = mcrypt_enc_get_block_size($this->mcrypt);
         $this->initv     = str_repeat(chr(0), mcrypt_enc_get_iv_size($this->mcrypt));
     }

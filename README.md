@@ -1,10 +1,10 @@
 RandomLib
 =========
 
-[![Build Status](https://travis-ci.org/paragonie/RandomLib.svg?branch=master)](https://travis-ci.org/paragonie/RandomLib)
-[![Latest Stable Version](https://poser.pugx.org/paragonie/RandomLib/v/stable)](https://packagist.org/packages/paragonie/RandomLib)
-[![Latest Unstable Version](https://poser.pugx.org/paragonie/RandomLib/v/unstable)](https://packagist.org/packages/paragonie/RandomLib)
-[![License](https://poser.pugx.org/paragonie/RandomLib/license)](https://packagist.org/packages/paragonie/RandomLib)
+[![Build Status](https://travis-ci.org/paragonie/RandomLib.svg?branch=master)](https://travis-ci.org/paragonie/random-lib)
+[![Latest Stable Version](https://poser.pugx.org/paragonie/random-lib/v/stable)](https://packagist.org/packages/paragonie/random-lib)
+[![Latest Unstable Version](https://poser.pugx.org/paragonie/random-lib/v/unstable)](https://packagist.org/packages/paragonie/random-lib)
+[![License](https://poser.pugx.org/paragonie/random-lib/license)](https://packagist.org/packages/paragonie/random-lib)
 
 A library for generating random numbers and strings of various strengths.
 
