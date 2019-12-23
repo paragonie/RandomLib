@@ -74,7 +74,7 @@ abstract class AbstractMixer implements \RandomLib\Mixer
      */
     public static function advisable()
     {
-        return static::test();
+        return (bool) static::test();
     }
 
     /**
